@@ -20,7 +20,7 @@ Here's a quick example of how to use `convert-4` to convert between different un
 import { DataSize } from "convert-4";
 
 // Create a DataSize instance from bytes
-const dataSize = new DataSize(1000);
+const dataSize = DataSize.fromBytes(1000);
 
 // Convert to kilobytes
 console.log(dataSize.toKilobytes()); // Output: 1
@@ -29,10 +29,6 @@ console.log(dataSize.toKilobytes()); // Output: 1
 ## API Reference
 
 ### DataSize Class
-
-#### Constructor
-
-- `constructor(private _bytes: number)`: Initializes a new instance of the `DataSize` class with the specified number of bytes.
 
 #### Static Methods
 

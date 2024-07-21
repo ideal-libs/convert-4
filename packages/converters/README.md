@@ -8,14 +8,6 @@ To create documentation for the [`DataSize`](/packages/converters/data-size.ts) 
 
 The [`DataSize`](/packages/converters/data-size.ts) class provides a comprehensive suite of methods for converting between different units of digital data size. It supports conversions between bits, bytes, kilobytes, megabytes, gigabytes, terabytes (using base 10), and kibibytes, mebibytes, gibibytes, tebibytes (using base 2).
 
-## Constructor
-
-```typescript
-constructor(private _bytes: number)
-```
-
-Initializes a new instance of the `DataSize` class with the specified number of bytes.
-
 ## Static Methods
 
 ### `from(data: FromDataSize): DataSize`

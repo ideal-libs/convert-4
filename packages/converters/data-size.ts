@@ -12,7 +12,7 @@ export interface FromDataSize {
 }
 
 export class DataSize {
-  constructor(private _bytes: number) {}
+  private constructor(private _bytes: number) {}
   private static readonly BASE_10 = 1000;
   private static readonly BASE_1024 = 1024;
 
