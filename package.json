@@ -1,6 +1,7 @@
 {
   "name": "convert-4",
   "version": "0.0.1",
+  "description": "convert-4 is a simple library for converting between units of measurement.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
@@ -26,7 +27,9 @@
     "build": "tsc",
     "start": "node dist/index.js"
   },
-  "description": "convert-4 is a simple library for converting between units of measurement.",
+  "author": {
+    "name": "Daniel dos Santos Fonseca"
+  },
   "devDependencies": {
     "typescript": "^5.5.3"
   }
