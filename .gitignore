@@ -1,2 +1,7 @@
-node_modules/
-dist/
+# compiled output
+/node_modules
+/dist
+
+# test
+/coverage
+/build
