@@ -140,7 +140,6 @@ export class DataSize {
       gibibytes: data.gibibytes || 0,
       tebibytes: data.tebibytes || 0,
     };
-    console.log(this.data);
   }
 
   static from(data: OptionalFromDataSize) {
@@ -191,7 +190,6 @@ export class DataSize {
   // Bytes
 
   static fromBytes(value: number): DataSize {
-    console.log({ value });
     return new DataSize({ bytes: value });
   }
 
