@@ -1,6 +1,6 @@
 {
   "name": "convert-4",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "convert-4 is a simple library for converting between units of measurement.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
