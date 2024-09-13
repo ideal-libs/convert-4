@@ -1,1 +1,1 @@
-export * from "./converters/data-size";
+export * from "./data-size";
