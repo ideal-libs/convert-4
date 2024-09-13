@@ -143,7 +143,7 @@ export class DataSize {
     console.log(this.data);
   }
 
-  static from(data: FromDataSize) {
+  static from(data: OptionalFromDataSize) {
     return new DataSize(data);
   }
 
