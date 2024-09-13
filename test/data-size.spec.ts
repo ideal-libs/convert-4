@@ -1,4 +1,4 @@
-import { DataSize } from "../../packages";
+import { DataSize } from "../packages";
 
 describe("DataSize Tests", () => {
   describe("Internatinal System of Units", () => {
