@@ -205,4 +205,10 @@ describe("DataSize Tests", () => {
     });
     expect(dataSize.toBits()).toEqual(37828573563618);
   });
+
+  it("should return error when invalid data is passed", () => {
+    expect(() => DataSize.from({ bitis: 1 } as any)).toThrow(
+      "Invalid key: bitis"
+    );
+  });
 });
