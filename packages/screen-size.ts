@@ -19,13 +19,13 @@ export class ScreenSize {
   static readonly CM_PER_INCH = 2.54;
   static readonly MM_PER_INCH = 25.4;
   static readonly PICAS_PER_INCH = 6;
-  static readonly POINT_PER_INCH = 72;
+  static readonly POINTS_PER_INCH = 72;
   static readonly PIXELS_PER_INCH = 72;
 
-  private data: FromScreenSize;
+  private measure: FromScreenSize;
 
-  private validation(data: OptionalFromScreenSize) {
-    const keys = Object.keys(data);
+  private validation(measure: OptionalFromScreenSize) {
+    const keys = Object.keys(measure);
     const validKeys = [
       "pt",
       "px",
@@ -46,32 +46,40 @@ export class ScreenSize {
         throw new Error(`Invalid key: ${key}`);
       }
 
-      if (typeof data[key as keyof OptionalFromScreenSize] !== "number") {
+      if (typeof measure[key as keyof OptionalFromScreenSize] !== "number") {
         throw new Error(`Invalid value for ${key}: must be a number`);
       }
+
+      if (measure[key as keyof OptionalFromScreenSize]! < 0) {
+        throw new Error(`Invalid value for ${key}: cannot be negative`);
+      }
     });
+
+    if (keys.length === 0) {
+      throw new Error("At least one unit must be specified.");
+    }
   }
 
-  private constructor(data: OptionalFromScreenSize) {
-    this.validation(data);
-    this.data = {
-      pc: data.pc || 0,
-      pt: data.pt || 0,
-      px: data.px || 0,
-      in: data.in || 0,
-      cm: data.cm || 0,
-      mm: data.mm || 0,
-      picas: data.picas || 0,
-      pixels: data.pixels || 0,
-      points: data.points || 0,
-      inches: data.inches || 0,
-      millimeters: data.millimeters || 0,
-      centimeters: data.centimeters || 0,
+  private constructor(measure: OptionalFromScreenSize) {
+    this.validation(measure);
+    this.measure = {
+      pc: measure.pc || 0,
+      pt: measure.pt || 0,
+      px: measure.px || 0,
+      in: measure.in || 0,
+      cm: measure.cm || 0,
+      mm: measure.mm || 0,
+      picas: measure.picas || 0,
+      pixels: measure.pixels || 0,
+      points: measure.points || 0,
+      inches: measure.inches || 0,
+      millimeters: measure.millimeters || 0,
+      centimeters: measure.centimeters || 0,
     };
   }
 
-  static from(data: OptionalFromScreenSize) {
-    return new ScreenSize(data);
+  static from(measure: OptionalFromScreenSize) {
+    return new ScreenSize(measure);
   }
 
   static fromPoints(value: number): ScreenSize {
@@ -98,55 +106,78 @@ export class ScreenSize {
     return new ScreenSize({ pc: value });
   }
 
-  calculateSize(divider: number): number {
-    const values = {
-      in: this.data.in / divider,
-      inches: this.data.inches / divider,
-      pt: this.data.pt / ScreenSize.POINT_PER_INCH / divider,
-      px: this.data.px / ScreenSize.PIXELS_PER_INCH / divider,
-      points: this.data.points / ScreenSize.POINT_PER_INCH / divider,
-      pixels: this.data.pixels / ScreenSize.PIXELS_PER_INCH / divider,
-      mm: this.data.mm / ScreenSize.MM_PER_INCH / divider,
-      cm: this.data.cm / ScreenSize.CM_PER_INCH / divider,
-      pc: this.data.pc / ScreenSize.PICAS_PER_INCH / divider,
-      picas: this.data.picas / ScreenSize.PICAS_PER_INCH / divider,
-      millimeters: this.data.millimeters / ScreenSize.MM_PER_INCH / divider,
-      centimeters: this.data.centimeters / ScreenSize.CM_PER_INCH / divider,
+  private convert(
+    value: number,
+    fromUnit: keyof FromScreenSize,
+    toUnit: keyof FromScreenSize
+  ): number {
+    const conversionRates: Partial<Record<keyof FromScreenSize, number>> = {
+      in: 1,
+      inches: 1,
+      mm: ScreenSize.MM_PER_INCH,
+      cm: ScreenSize.CM_PER_INCH,
+      pc: ScreenSize.PICAS_PER_INCH,
+      pt: ScreenSize.POINTS_PER_INCH,
+      px: ScreenSize.PIXELS_PER_INCH,
+      picas: ScreenSize.PICAS_PER_INCH,
+      pixels: ScreenSize.PIXELS_PER_INCH,
+      points: ScreenSize.POINTS_PER_INCH,
+      millimeters: ScreenSize.MM_PER_INCH,
+      centimeters: ScreenSize.CM_PER_INCH,
     };
-    return Object.values(values).reduce((acc, curr) => acc + curr, 0);
+
+    if (!(fromUnit in conversionRates)) {
+      throw new Error(`Invalid 'from' unit: ${fromUnit}`);
+    }
+
+    if (!(toUnit in conversionRates)) {
+      throw new Error(`Invalid 'to' unit: ${toUnit}`);
+    }
+
+    const fromRate = conversionRates[fromUnit] as number;
+    const toRate = conversionRates[toUnit] as number;
+
+    return (value / fromRate) * toRate;
+  }
+
+  private toUnit(unit: keyof FromScreenSize): number {
+    const fromUnits = Object.keys(this.measure).filter(
+      (key) => this.measure[key as keyof FromScreenSize]! > 0
+    ) as Array<keyof FromScreenSize>;
+
+    if (fromUnits.length === 0) {
+      throw new Error("No units available for conversion.");
+    }
+
+    const totalValueInTargetUnit = fromUnits.reduce((total, fromUnit) => {
+      const value = this.measure[fromUnit];
+      return total + this.convert(value, fromUnit, unit);
+    }, 0);
+
+    return parseFloat(totalValueInTargetUnit.toFixed(6));
   }
 
   toPoints(): number {
-    return parseFloat(
-      this.calculateSize(1 / ScreenSize.POINT_PER_INCH).toFixed(2)
-    );
+    return this.toUnit("pt");
   }
 
   toPixels(): number {
-    return parseFloat(
-      this.calculateSize(1 / ScreenSize.PIXELS_PER_INCH).toFixed(2)
-    );
+    return this.toUnit("px");
   }
 
   toInches(): number {
-    return parseFloat(this.calculateSize(1).toFixed(2));
+    return this.toUnit("in");
   }
 
   toCentimeters(): number {
-    return parseFloat(
-      this.calculateSize(1 / ScreenSize.CM_PER_INCH).toFixed(2)
-    );
+    return this.toUnit("cm");
   }
 
   toMillimeters(): number {
-    return parseFloat(
-      this.calculateSize(1 / ScreenSize.MM_PER_INCH).toFixed(2)
-    );
+    return this.toUnit("mm");
   }
 
   toPicas(): number {
-    return parseFloat(
-      this.calculateSize(1 / ScreenSize.PICAS_PER_INCH).toFixed(2)
-    );
+    return this.toUnit("pc");
   }
 }
