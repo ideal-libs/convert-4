@@ -63,18 +63,18 @@ export class ScreenSize {
   private constructor(measure: OptionalFromScreenSize) {
     this.validation(measure);
     this.measure = {
-      pc: measure.pc || 0,
-      pt: measure.pt || 0,
-      px: measure.px || 0,
-      in: measure.in || 0,
-      cm: measure.cm || 0,
-      mm: measure.mm || 0,
-      picas: measure.picas || 0,
-      pixels: measure.pixels || 0,
-      points: measure.points || 0,
-      inches: measure.inches || 0,
-      millimeters: measure.millimeters || 0,
-      centimeters: measure.centimeters || 0,
+      pc: measure.pc ?? 0,
+      pt: measure.pt ?? 0,
+      px: measure.px ?? 0,
+      in: measure.in ?? 0,
+      cm: measure.cm ?? 0,
+      mm: measure.mm ?? 0,
+      picas: measure.picas ?? 0,
+      pixels: measure.pixels ?? 0,
+      points: measure.points ?? 0,
+      inches: measure.inches ?? 0,
+      millimeters: measure.millimeters ?? 0,
+      centimeters: measure.centimeters ?? 0,
     };
   }
 
@@ -142,7 +142,7 @@ export class ScreenSize {
 
   private toUnit(unit: keyof FromScreenSize): number {
     const fromUnits = Object.keys(this.measure).filter(
-      (key) => this.measure[key as keyof FromScreenSize]! > 0
+      (key) => this.measure[key as keyof FromScreenSize] > 0
     ) as Array<keyof FromScreenSize>;
 
     if (fromUnits.length === 0) {
