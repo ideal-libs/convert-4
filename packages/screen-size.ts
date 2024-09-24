@@ -126,16 +126,16 @@ export class ScreenSize {
       centimeters: ScreenSize.CM_PER_INCH,
     };
 
-    if (!(fromUnit in conversionRates)) {
+    const fromRate = conversionRates[fromUnit] as number;
+    const toRate = conversionRates[toUnit] as number;
+
+    if (!fromRate) {
       throw new Error(`Invalid 'from' unit: ${fromUnit}`);
     }
 
-    if (!(toUnit in conversionRates)) {
+    if (!toRate) {
       throw new Error(`Invalid 'to' unit: ${toUnit}`);
     }
-
-    const fromRate = conversionRates[fromUnit] as number;
-    const toRate = conversionRates[toUnit] as number;
 
     return (value / fromRate) * toRate;
   }
